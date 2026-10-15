@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Disabling linter and tests
+#   - linting is run using stage-lint in pre-commit
+#   - tests are run in CI
+# yarn lint
+# yarn run test

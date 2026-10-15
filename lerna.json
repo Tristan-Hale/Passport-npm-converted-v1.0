@@ -1,0 +1,17 @@
+{
+  "packages": [
+    "app",
+    "database-client",
+    "iam",
+    "embed",
+    "identity",
+    "types",
+    "platforms",
+    "embed-popup"
+  ],
+  "npmClient": "npm",
+  "version": "independent",
+  "useWorkspaces": true,
+  "stream": true,
+  "changelogPreset": "angular"
+}

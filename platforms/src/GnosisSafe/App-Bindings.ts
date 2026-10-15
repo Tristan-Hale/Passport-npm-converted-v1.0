@@ -1,0 +1,21 @@
+import { AppContext, ProviderPayload } from "../types.js";
+import { Platform } from "../utils/platform.js";
+
+export class GnosisSafePlatform extends Platform {
+  platformId = "GnosisSafe";
+  path = "GnosisSafe";
+
+  banner = {
+    heading:
+      "Currently, we only recognize Gnosis Safes on the Ethereum main network. So you can't get that stamp through your Gnosis Safes on other networks.",
+    cta: {
+      label: "Learn more",
+      url: "https://support.passport.xyz/passport-knowledge-base/stamps/how-do-i-add-passport-stamps/gnosis-safe-stamp",
+    },
+  };
+
+  async getProviderPayload(appContext: AppContext): Promise<ProviderPayload> {
+    const result = await Promise.resolve({});
+    return result;
+  }
+}

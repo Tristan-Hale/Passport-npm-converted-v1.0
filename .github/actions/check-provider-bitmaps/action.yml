@@ -1,0 +1,60 @@
+name: "Check Provider Bitmaps"
+description: "Checkout that the onchai provider bitmaps are in sync with the configuration in the code"
+
+inputs:
+  ALCHEMY_API_KEY:
+    description: "Alchemy API key"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check Optimism Onchain Provider Bitmaps
+      run: |
+        echo "📋📋📋 Check Optimism Onchain Provider Bitmaps"
+        npm run checkProviders:op -w @gitcoin/passport-iam
+      shell: bash
+      env:
+        ALCHEMY_API_KEY: ${{ inputs.ALCHEMY_API_KEY }}
+    - name: Check Optimism Sepolia Onchain Provider Bitmaps
+      run: |
+        echo "📋📋📋 Check Optimism Sepolia Onchain Provider Bitmaps"
+        npm run checkProviders:op-sepolia -w @gitcoin/passport-iam
+      shell: bash
+      env:
+        ALCHEMY_API_KEY: ${{ inputs.ALCHEMY_API_KEY }}
+    - name: Check Arbitrum Onchain Provider Bitmaps
+      run: |
+        echo "📋📋📋 Check Arbitrum  Onchain Provider Bitmaps"
+        npm run checkProviders:arb -w @gitcoin/passport-iam
+      shell: bash
+      env:
+        ALCHEMY_API_KEY: ${{ inputs.ALCHEMY_API_KEY }}
+    - name: Check ZkSync Onchain Provider Bitmaps
+      run: |
+        echo "📋📋📋 Check ZkSync Onchain Provider Bitmaps"
+        npm run checkProviders:zksync -w @gitcoin/passport-iam
+      shell: bash
+      env:
+        ALCHEMY_API_KEY: ${{ inputs.ALCHEMY_API_KEY }}
+    - name: Check Scroll Onchain Provider Bitmaps
+      run: |
+        echo "📋📋📋 Check Scroll Onchain Provider Bitmaps"
+        npm run checkProviders:scroll -w @gitcoin/passport-iam
+      shell: bash
+      env:
+        ALCHEMY_API_KEY: ${{ inputs.ALCHEMY_API_KEY }}
+    - name: Check Linea Onchain Provider Bitmaps
+      run: |
+        echo "📋📋📋 Check Linea Onchain Provider Bitmaps"
+        npm run checkProviders:linea -w @gitcoin/passport-iam
+      shell: bash
+      env:
+        ALCHEMY_API_KEY: ${{ inputs.ALCHEMY_API_KEY }}
+    - name: Check Shape Onchain Provider Bitmaps
+      run: |
+        echo "📋📋📋 Check Shape Onchain Provider Bitmaps"
+        npm run checkProviders:shape -w @gitcoin/passport-iam
+      shell: bash
+      env:
+        ALCHEMY_API_KEY: ${{ inputs.ALCHEMY_API_KEY }}

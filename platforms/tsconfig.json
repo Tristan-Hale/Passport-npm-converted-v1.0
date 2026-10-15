@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "esModuleInterop": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2022",
+    "skipLibCheck": true,
+    "noImplicitAny": true,
+    "moduleResolution": "nodenext",
+    "sourceMap": true,
+    "outDir": "dist/esm",
+    "allowJs": true,
+    "baseUrl": "src",
+    "jsx": "react",
+    "lib": ["es6", "dom"]
+  },
+  "include": ["src/**/*", "__tests__/**/*"]
+}

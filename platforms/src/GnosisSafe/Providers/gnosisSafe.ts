@@ -1,0 +1,93 @@
+// ----- Types
+import { ProviderExternalVerificationError, type Provider, type ProviderOptions } from "../../types.js";
+import type { RequestPayload, VerifiedPayload } from "@gitcoin/passport-types";
+
+// ----- Libs
+import axios from "axios";
+import { ethers } from "ethers";
+
+// ----- Credential verification
+import { getAddress } from "../../utils/signer.js";
+
+// ----- Utils
+import { handleProviderAxiosError } from "../../utils/handleProviderAxiosError.js";
+
+// https://docs.safe.global/core-api/transaction-service-reference/mainnet
+export const gnosisSafeApiEndpoint = "https://api.safe.global/tx-service/eth/api/v1/";
+
+type OwnerSafesResponse = {
+  safes: string[];
+};
+
+// Export a GnosisSafeProvider Provider
+export class GnosisSafeProvider implements Provider {
+  // Give the provider a type so that we can select it with a payload
+  type = "GnosisSafe";
+
+  // Options can be set here and/or via the constructor
+  _options = {};
+
+  // construct the provider instance with supplied options
+  constructor(options: ProviderOptions = {}) {
+    this._options = { ...this._options, ...options };
+  }
+
+  // Verify that address defined in the payload has at least 1 finalized transactioin
+  async verify(payload: RequestPayload): Promise<VerifiedPayload> {
+    // if a signer is provider we will use that address to verify against
+    try {
+      let valid = false;
+      const errors = [];
+
+      // Get the address. Note: this is expected to be a checksumed address (this is what the gnosis safe API expects)
+      const address = ethers.getAddress(await getAddress(payload));
+
+      // Check if address is owner of at least 1 safe
+      try {
+        const ownerSafes = await getSafes(address);
+        valid = !!ownerSafes.safes && ownerSafes.safes.length >= 1;
+      } catch (e) {
+        errors.push(String(e));
+      }
+
+      if (!valid && errors.length === 0) {
+        errors.push("Unable to find any safes owned by the given address");
+      }
+
+      return Promise.resolve({
+        valid,
+        record: valid
+          ? {
+              address: address,
+            }
+          : undefined,
+        errors: errors.length ? errors : [],
+      });
+    } catch (error: unknown) {
+      throw new ProviderExternalVerificationError(`Error verifying Gnosis Safes: ${JSON.stringify(error)}`);
+    }
+  }
+}
+
+const getSafes = async (address: string): Promise<OwnerSafesResponse> => {
+  try {
+    const headers: Record<string, string> = {};
+    const apiKey = process.env.SAFE_API_KEY;
+    if (apiKey) {
+      headers["Authorization"] = `Bearer ${apiKey}`;
+    }
+
+    const requestResponse = await axios.get(`${gnosisSafeApiEndpoint}owners/${address}/safes/`, {
+      headers,
+      timeout: 10_000,
+    });
+
+    if (requestResponse.status != 200) {
+      throw [`HTTP Error '${requestResponse.status}'. Details: '${requestResponse.statusText}'.`];
+    }
+
+    return requestResponse.data as OwnerSafesResponse;
+  } catch (error: unknown) {
+    handleProviderAxiosError(error, "gnosis safes", [address]);
+  }
+};

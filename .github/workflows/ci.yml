@@ -1,0 +1,71 @@
+name: CI - build & test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build_and_test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    # Run a local ceramic nod to test against
+    # services:
+    #   ceramic:
+    #     image: gitcoinpassport/js-ceramic:3.2.0
+    #     ports:
+    #       - 7007:7007
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 22
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.14.0
+          cache: "npm"
+      - name: Install Packages
+        run: npm ci
+      - name: Cat platforms/jest.config.ts
+        run: cat platforms/jest.config.ts
+      - name: Run Tests
+        run: npm test
+      - name: Run Linter
+        run: npm run lint
+      - name: Workarround for build error
+        run: rm -rf node_modules/@tendermint
+      - name: Run Build (ensure that build succeeds)
+        run: npm run build
+      - name: Load Secrets
+        id: op-load-secret
+        uses: 1password/load-secrets-action@v1
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  check-provider-bitmap:
+    name: Check Provider Bitmaps
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.14.0
+          cache: "npm"
+      - name: Install Packages
+        run: npm ci
+      - name: Load Secrets
+        id: op-load-secret
+        uses: 1password/load-secrets-action@v1
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          ALCHEMY_API_KEY: op://DevOps/passport-xyz-review-secrets/ci/ALCHEMY_API_KEY
+      - name: Check provider bitmaps
+        uses: ./.github/actions/check-provider-bitmaps
+        with:
+          ALCHEMY_API_KEY: ${{ env.ALCHEMY_API_KEY }}

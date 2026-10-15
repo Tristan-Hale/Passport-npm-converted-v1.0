@@ -1,0 +1,24 @@
+// const DIDKit = require("@spruceid/didkit-wasm-node");
+// process.env.IAM_JWK = DIDKit.generateEd25519Key();
+process.env.IAM_JWK =
+  '{"kty":"OKP","crv":"Ed25519","x":"a7wbszn1DfZ3I7-_zDkUXCgypcGxL_cpCSTYEPRYj_o","d":"Z0hucmxRt1C22ygAXJ1arXwD9QlAA5tEPLb7qoXYDGY"}';
+process.env.IAM_JWK_EIP712 =
+  '{"kty":"EC","crv":"secp256k1","x":"PdB2nS-knyAxc6KPuxBr65vRpW-duAXwpeXlwGJ03eU","y":"MwoGZ08hF5uv-_UEC9BKsYdJVSbJNHcFhR1BZWer5RQ","d":"z9VrSNNZXf9ywUx3v_8cLDhSw8-pvAT9qu_WZmqqfWM"}';
+process.env.IAM_JWK_EIP712_V1 =
+  '{"kty":"EC","crv":"secp256k1","x":"PdB2nS-knyAxc6KPuxBr65vRpW-duAXwpeXlwGJ03eU","y":"MwoGZ08hF5uv-_UEC9BKsYdJVSbJNHcFhR1BZWer5RQ","d":"z9VrSNNZXf9ywUx3v_8cLDhSw8-pvAT9qu_WZmqqfWM"}';
+process.env.IAM_JWK_EIP712_V1_START_TIME = "02/01/2021";
+process.env.ATTESTATION_SIGNER_PRIVATE_KEY = "0x04d16281ff3bf268b29cdd684183f72542757d24ae9fdfb863e7c755e599163a";
+process.env.TESTNET_ATTESTATION_SIGNER_PRIVATE_KEY =
+  "0x04d16281ff3bf268b29cdd684183f72542757d24ae9fdfb863e7c755e599163a";
+process.env.GITCOIN_VERIFIER_CHAIN_ID = "84531";
+process.env.ALLO_SCORER_ID = "1";
+process.env.SCORER_ENDPOINT = "http://127.0.0.1:8002";
+process.env.SCORER_API_KEY = "abcd";
+process.env.MORALIS_API_KEY = "abcd";
+process.env.EAS_GITCOIN_STAMP_SCHEMA = "0x";
+process.env.EAS_FEE_USD = "3";
+process.env.FF_ROTATING_KEYS = "on";
+process.env.HUMAN_NETWORK_CLIENT_PRIVATE_KEY = "0x4f39f049fdc7c98e1e7a995b142dac92f978b5137334ba010bf2b4abdde26e48"; // Public: 0xF952E8c44b95F44BD5f46Bc499412AeA16CACfE9
+process.env.HUMAN_NETWORK_RELAY_URL = "http://localhost:8081";
+process.env.HUMAN_NETWORK_START_VERSION = "1";
+process.env.SIGN_PROTOCOL_API_KEY = "0xsign_api_key";

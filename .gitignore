@@ -1,0 +1,40 @@
+node_modules
+.env
+.env.*
+.env-prod
+.nvmrc
+.yarnrc
+.yalc
+yalc.lock
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor directories and files
+.yarn/*
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+schemas/.env.yarn
+
+# Do not ignore tehse files
+!.env.example
+
+.playwright-mcp
+
+# Mim - Transient/local state files
+.claude/knowledge/unresolved.md
+.claude/knowledge/mim.log

@@ -1,0 +1,97 @@
+{
+  "name": "@gitcoin/passport",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "@eslint/js": "^9.20.0",
+    "@types/node": "^17.0.23",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "concurrently": "^7.0.0",
+    "eslint": "^9.20.1",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-jest": "^28.11.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "husky": "^7.0.0",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.1",
+    "prettier-eslint": "^16.3.0",
+    "rimraf": "^3.0.2",
+    "typescript-eslint": "^8.24.0"
+  },
+  "workspaces": [
+    "app",
+    "database-client",
+    "iam",
+    "embed",
+    "identity",
+    "types",
+    "platforms",
+    "embed-popup"
+  ],
+  "scripts": {
+    "clean": "npm run clean --workspaces --if-present",
+    "nuke": "npm run clean && rimraf node_modules",
+    "prepare": "husky install",
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:iam": "npm run lint -w @gitcoin/passport-iam",
+    "lint:identity": "npm run lint -w @gitcoin/passport-identity",
+    "test": "npm run test --workspaces --if-present",
+    "test:iam": "npm run test -w @gitcoin/passport-iam",
+    "test:app": "npm run test -w @gitcoin/passport-app",
+    "test:identity": "npm run test -w @gitcoin/passport-identity",
+    "test:platforms": "npm run test -w @gitcoin/passport-platforms",
+    "prettier": "npm run prettier --workspaces --if-present",
+    "build": "npm run build:platforms && npm run build:identity && npm run build:database-client && npm run build:iam && npm run build:embed && npm run build:app && npm run build:embed-popup && npm run build:infra-scripts",
+    "build:database-client": "npm run build -w @gitcoin/passport-database-client",
+    "build:identity": "npm run build -w @gitcoin/passport-identity",
+    "build:iam": "npm run build -w @gitcoin/passport-iam",
+    "build:app": "npm run build -w @gitcoin/passport-app",
+    "build:platforms": "npm run build -w @gitcoin/passport-platforms",
+    "build:embed": "npm run build -w @gitcoin/passport-embed",
+    "build:embed-popup": "npm run build -w @gitcoin/passport-embed-popup",
+    "build:infra-scripts": "npm run build --prefix infra/scripts/verifier_sweep",
+    "dev": "concurrently --kill-others \"npm run start:iam\" \"npm run dev:app\" \"docker-compose -f hn-signer/docker-compose.yml up\"",
+    "debug": "concurrently --kill-others \"npm run debug:iam\" \"npm run dev:app\" \"npm run debug:db-client\" \"docker-compose -f hn-signer/docker-compose.yml up\"",
+    "debug:iam": "npm run debug -w @gitcoin/passport-iam",
+    "debug:db-client": "npm run debug -w @gitcoin/passport-database-client",
+    "start": "npm run dev",
+    "start:iam": "npm run start -w @gitcoin/passport-iam",
+    "dev:app": "npm run dev -w @gitcoin/passport-app",
+    "start:ceramic": "npm run ceramic -w @gitcoin/passport-database-client",
+    "prod:start:iam": "npm run prod:start -w @gitcoin/passport-iam",
+    "prestart": "npm run build:platforms && npm run build:identity && npm run build:database-client && npm run build:iam && npm run build:embed && npm run build:app",
+    "pretest": "npm run build:identity && npm run build:database-client",
+    "postinstall": "npm run build:platforms && npm run build:identity && npm run build:database-client && npm run build:iam && npm run build:embed && npm run build:app"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "overrides": {
+    "csstype": "3.0.10",
+    "lit": "^3.1.0",
+    "node-gyp": "^10.1.0",
+    "leveldown": "6.1.1",
+    "did-session": {
+      "uint8arrays": "^5.1.0"
+    },
+    "dids": {
+      "uint8arrays": "^5.1.0"
+    },
+    "@didtools/*": {
+      "uint8arrays": "^5.1.0"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}

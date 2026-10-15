@@ -1,0 +1,241 @@
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-BlackIt.woff2") format("woff2");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-BoldIt.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-Book.woff2") format("woff2");
+  font-weight: 350;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-BookIt.woff2") format("woff2");
+  font-weight: 350;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-Hairline.woff2") format("woff2");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-HairlineIt.woff2")
+    format("woff2");
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-LightIt.woff2") format("woff2");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-MediumIt.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-RegularIt.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-Semibold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-SemiboldIt.woff2")
+    format("woff2");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-Thin.woff2") format("woff2");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse";
+  src: url("/assets/fonts/SuisseIntl/SuisseIntl-ThinIt.woff2") format("woff2");
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Hatton font */
+@font-face {
+  font-family: "PPHatton";
+  src: url("/assets/fonts/Hatton/PPHatton-Medium.woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PPHatton";
+  src: url("/assets/fonts/Hatton/PPHatton-Regular.woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PPHatton";
+  src: url("/assets/fonts/Hatton/PPHatton-Semibold.woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* This sources Adobe CC fonts */
+@import url("https://use.typekit.net/tdl1ktm.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .verify-btn {
+    @apply w-full border-t border-accent-2 p-2 hover:text-accent-3;
+  }
+  .verify-btn:disabled {
+    @apply text-gray-400;
+  }
+}
+
+.step-icon-inner {
+  width: 0.625rem;
+  height: 0.625rem;
+
+  animation-duration: 1s;
+  animation-name: step-icon-loading;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: ease;
+}
+
+:root {
+  --onboard-shadow-3: none;
+  --account-center-position-top: -14px;
+  --account-center-position-right: 8.5rem;
+  --account-center-border-radius: 16px;
+  --onboard-action-required-btn-text-color: #fff;
+  --onboard-font-family-normal: var(--font-body);
+}
+
+body {
+  background-color: rgb(var(--color-background)) !important;
+}
+
+.override-text-color * {
+  color: inherit !important;
+}
+
+@media (max-width: 1020px /* md */) {
+  :root {
+    --account-center-position-right: 80px;
+  }
+}
+
+@media (max-width: 480px /* base */) {
+  :root {
+    --account-center-position-right: 60px;
+    --onboard-modal-top: 0;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate {
+  animation: rotate 500ms linear infinite;
+}

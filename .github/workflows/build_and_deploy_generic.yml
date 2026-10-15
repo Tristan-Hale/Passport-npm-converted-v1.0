@@ -1,0 +1,225 @@
+name: Library - Build and Deploy API - Generic
+
+on:
+  workflow_call:
+    inputs:
+      refspec:
+        description: "The commit SHA"
+        type: string
+        required: True
+      docker_tag:
+        description: "Docker tag"
+        type: string
+        required: True
+      environment:
+        description: "Environment to deploy to"
+        type: string
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  docker_iam:
+    name: Build and push IAM docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secret
+        id: op-load-secret
+        uses: 1password/load-secrets-action@v1
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          CLOUDFLARE_API_TOKEN: op://DeployerVault/github-aws-${{ inputs.environment }}/ci/CLOUDFLARE_API_TOKEN
+
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v1
+
+      - name: Configure 1Password Service Account
+        uses: 1password/load-secrets-action/configure@v1
+        with:
+          service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+      - id: build_and_push_docker_iam_image
+        uses: passportxyz/gh-workflows/.github/actions/build_and_push@v5
+        with:
+          refspec: ${{ inputs.refspec }}
+          docker_tag: ${{ inputs.docker_tag }}
+          ecr_repository_name: passport
+          aws_region: us-west-2
+          aws_role_arn: arn:aws:iam::${{ inputs.environment == 'production' && '559026686882' || '515520736917' }}:role/pulumi-ci-passport-${{ inputs.environment }}
+          dockerfile_name: iam/Dockerfile
+          build_dir: ./
+
+  docker_embed:
+    name: Build and push embed docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secret
+        id: op-load-secret
+        uses: 1password/load-secrets-action@v1
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          CLOUDFLARE_API_TOKEN: op://DeployerVault/github-aws-${{ inputs.environment }}/ci/CLOUDFLARE_API_TOKEN
+
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v1
+
+      - name: Configure 1Password Service Account
+        uses: 1password/load-secrets-action/configure@v1
+        with:
+          service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+      - id: build_and_push_docker_embed_image
+        uses: passportxyz/gh-workflows/.github/actions/build_and_push@v5
+        with:
+          refspec: ${{ inputs.refspec }}
+          docker_tag: ${{ inputs.docker_tag }}
+          ecr_repository_name: passport-embed
+          aws_region: us-west-2
+          aws_role_arn: arn:aws:iam::${{ inputs.environment == 'production' && '559026686882' || '515520736917' }}:role/pulumi-ci-passport-${{ inputs.environment }}
+          dockerfile_name: embed/Dockerfile
+          build_dir: ./
+
+  deploy_preview:
+    name: Preview - Deploying AWS Infra
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.refspec }}
+          fetch-depth: 0
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v1
+      - name: Configure 1Password Service Account
+        uses: 1password/load-secrets-action/configure@v1
+        with:
+          service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      - name: Load secret
+        id: op-load-secret
+        uses: 1password/load-secrets-action@v1
+        with:
+          export-env: true
+        env:
+          CLOUDFLARE_API_TOKEN: op://DeployerVault/github-aws-${{ inputs.environment }}/ci/CLOUDFLARE_API_TOKEN
+
+      - name: Build Sweeper Service
+        run: |
+          cd infra/scripts/verifier_sweep
+          npm ci
+          npm run build
+      - name: Build Auto Credits Service
+        run: |
+          cd infra/scripts/auto_credits
+          npm install
+          npm run build
+      - name: Prepare to Deploy to AWS
+        uses: passportxyz/gh-workflows/.github/actions/prepare_deploy_to_aws@v3
+      - name: Deploy Preview
+        uses: passportxyz/gh-workflows/.github/actions/deploy_to_aws@v4
+        with:
+          docker_tag: ${{ inputs.docker_tag }}
+          stack_name: ${{ inputs.environment }}
+          aws_region: us-west-2
+          aws_role_arn: arn:aws:iam::${{ inputs.environment == 'production' && '559026686882' || '515520736917' }}:role/pulumi-ci-passport-${{ inputs.environment }}
+          pulumi_command: preview
+          pulumi_diff: true
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ env.CLOUDFLARE_API_TOKEN }}
+
+  build_app:
+    name: Build App
+    uses: ./.github/workflows/sync_to_s3_generic_build_app.yml
+    secrets: inherit
+    with:
+      refspec: ${{ inputs.refspec }}
+      environment: ${{ inputs.environment }}
+
+  build_embed:
+    name: Build Embed
+    uses: ./.github/workflows/sync_to_s3_generic_build_embed.yml
+    secrets: inherit
+    with:
+      refspec: ${{ inputs.refspec }}
+      environment: ${{ inputs.environment }}
+
+  deploy_confirm:
+    name: Review Approval Pending
+    needs: [docker_iam, docker_embed, deploy_preview, build_app, build_embed]
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Approve Release to Review (check pulumi preview)
+        run: |
+          echo "Ref" ${{ inputs.refspec }}
+
+  deploy_backends:
+    name: Deploying AWS Infra
+    needs: [docker_iam, docker_embed, deploy_preview, deploy_confirm]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.refspec }}
+          fetch-depth: 0
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v1
+      - name: Configure 1Password Service Account
+        uses: 1password/load-secrets-action/configure@v1
+        with:
+          service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      - name: Load secret
+        id: op-load-secret
+        uses: 1password/load-secrets-action@v1
+        with:
+          export-env: true
+        env:
+          CLOUDFLARE_API_TOKEN: op://DeployerVault/github-aws-${{ inputs.environment }}/ci/CLOUDFLARE_API_TOKEN
+
+      - name: Build Sweeper Service
+        run: |
+          cd infra/scripts/verifier_sweep
+          npm ci
+          npm run build
+      - name: Build Auto Credits Service
+        run: |
+          cd infra/scripts/auto_credits
+          npm install
+          npm run build
+      - name: Prepare to Deploy to AWS
+        uses: passportxyz/gh-workflows/.github/actions/prepare_deploy_to_aws@v3
+      - name: Deploy to AWS
+        uses: passportxyz/gh-workflows/.github/actions/deploy_to_aws@v4
+        with:
+          docker_tag: ${{ inputs.docker_tag }}
+          stack_name: ${{ inputs.environment }}
+          aws_region: us-west-2
+          aws_role_arn: arn:aws:iam::${{ inputs.environment == 'production' && '559026686882' || '515520736917' }}:role/pulumi-ci-passport-${{ inputs.environment }}
+          pulumi_command: up
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ env.CLOUDFLARE_API_TOKEN }}
+
+  push_app:
+    name: Push App to S3
+    needs: [deploy_confirm, deploy_backends]
+    uses: ./.github/workflows/sync_to_s3_generic_push_app.yml
+    secrets: inherit
+    with:
+      refspec: ${{ inputs.refspec }}
+      environment: ${{ inputs.environment }}
+
+  push_embed:
+    name: Push Embed to S3
+    needs: [deploy_confirm, deploy_backends]
+    uses: ./.github/workflows/sync_to_s3_generic_push_embed.yml
+    secrets: inherit
+    with:
+      refspec: ${{ inputs.refspec }}
+      environment: ${{ inputs.environment }}
+    
